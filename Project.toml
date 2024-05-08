@@ -1,0 +1,4 @@
+name = "Monomials"
+uuid = "272bfe72-f66c-432f-a94d-600f29493792"
+authors = ["Jasper Behrensdorf <jasper.behrensdorf@gmail.com>"]
+version = "0.1.0"
