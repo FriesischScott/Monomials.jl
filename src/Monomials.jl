@@ -46,11 +46,13 @@ function degree(m::Monomial)
     return sum(m.α)
 end
 
-function monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder)
+function monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder; include_zero::Bool=false)
 
     nvars = length(x)
 
-    exponents = Iterators.filter(α -> 0 < sum(α) <= d, Iterators.product(repeat([0:d], nvars)...))
+    lb = include_zero ? -1 : 0
+
+    exponents = Iterators.filter(α -> lb < sum(α) <= d, Iterators.product(repeat([0:d], nvars)...))
 
     m = map(exponents) do α
         Monomial(x, [α...])
