@@ -120,4 +120,23 @@ using Monomials
 
     end
 
+    @testset "Show" begin
+
+        vars = ["x", "y"]
+
+        @test repr(Monomial(vars, [0, 0])) == "1"
+
+        @test repr(Monomial(vars, [1, 0])) == "x"
+        @test repr(Monomial(vars, [0, 1])) == "y"
+        @test repr(Monomial(vars, [1, 1])) == "xy"
+        @test repr(Monomial(vars, [2, 0])) == "x²"
+        @test repr(Monomial(vars, [0, 2])) == "y²"
+        @test repr(Monomial(vars, [2, 1])) == "x²y"
+        @test repr(Monomial(vars, [1, 2])) == "xy²"
+        @test repr(Monomial(vars, [2, 2])) == "x²y²"
+
+        @test repr(Monomial(vars, [2, 11])) == "x²y¹¹"
+
+    end
+
 end
