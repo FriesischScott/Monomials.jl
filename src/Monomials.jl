@@ -121,6 +121,6 @@ function order(m::AbstractVector{Monomial}, _::GradedReverseLexicographicOrder)
     return sort(m; lt=lt)
 end
 
-
+include("show.jl")
 
 end
