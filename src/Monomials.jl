@@ -10,9 +10,7 @@ export GradedLexicographicOrder
 
 export GradedReverseLexicographicOrder
 
-export EliminationOrder
 
-export WeightOrder
 export degree
 export monomials
 
