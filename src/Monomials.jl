@@ -46,7 +46,7 @@ function degree(m::Monomial)
     return sum(m.α)
 end
 
-function monomials(x::AbstractVector{String}, d::Integer,)
+function monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder)
 
     nvars = length(x)
 
@@ -56,7 +56,7 @@ function monomials(x::AbstractVector{String}, d::Integer,)
         Monomial(x, [α...])
     end
 
-    return m
+    return order(m, mo)
 
 end
 
