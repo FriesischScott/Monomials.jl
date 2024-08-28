@@ -4,8 +4,6 @@ export Monomial
 
 export LexicographicOrder
 
-export ReverseLexicographicOrder
-
 export GradedLexicographicOrder
 
 export GradedReverseLexicographicOrder
@@ -35,9 +33,12 @@ struct GradedReverseLexicographicOrder <: MonomialOrder
 end
 
 
-
 function (m::Monomial)(x::AbstractVector{<:Real})
     return prod(x .^ m.α)
+end
+
+function (m::Monomial)(x::AbstractMatrix{<:Real})
+    return map(xᵢ -> m(xᵢ), eachcol(x))
 end
 
 function degree(m::Monomial)
