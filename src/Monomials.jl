@@ -73,9 +73,6 @@ function order(m::AbstractVector{Monomial}, _::LexicographicOrder)
             idx = findfirst(!iszero, a.α .- b.α)
             return a.α[idx] < b.α[idx]
         end
-
-        return false
-
     end
 
     return sort(m; lt=lt)
@@ -95,10 +92,6 @@ function order(m::AbstractVector{Monomial}, _::GradedLexicographicOrder)
             idx = findfirst(!iszero, a.α .- b.α)
             return a.α[idx] < b.α[idx]
         end
-
-        return false
-
-
     end
 
     return sort(m; lt=lt)
