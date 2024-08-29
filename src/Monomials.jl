@@ -38,6 +38,14 @@ function (m::Monomial)(x::AbstractMatrix{<:Real})
     return map(xᵢ -> m(xᵢ), eachcol(x))
 end
 
+function (mvec::AbstractVector{Monomial})(x::AbstractVector{<:Real})
+    return [m(x) for m in mvec]
+end
+
+function (mvec::AbstractVector{Monomial})(x::AbstractMatrix{<:Real})
+    return vcat([m(x)' for m in mvec]...)
+end
+
 function degree(m::Monomial)
     return sum(m.α)
 end
