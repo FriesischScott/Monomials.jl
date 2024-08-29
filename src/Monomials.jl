@@ -112,8 +112,6 @@ function order(m::AbstractVector{Monomial}, _::GradedReverseLexicographicOrder)
             return a.α[idx] > b.α[idx]
         end
 
-        return false
-
 
     end
 
