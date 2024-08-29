@@ -23,9 +23,6 @@ abstract type MonomialOrder end
 struct LexicographicOrder <: MonomialOrder
 end
 
-struct ReverseLexicographicOrder <: MonomialOrder
-end
-
 struct GradedLexicographicOrder <: MonomialOrder
 end
 
