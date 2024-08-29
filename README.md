@@ -3,7 +3,7 @@ Monomials.jl
 
 ![Build Status](https://github.com/FriesischScott/Monomials.jl/actions/workflows/ci.yml/badge.svg) [![Coverage Status](https://codecov.io/gh/FriesischScott/Monomials.jl/graph/badge.svg?token=MFK6LJBRNK)](https://codecov.io/gh/FriesischScott/Monomials.jl)
 
-A simple apackage to generate and order vectors of monomials. It is designed as an alternative to the [MultivariatePolynomials.jl](https://github.com/JuliaAlgebra/MultivariatePolynomials.jl) ecosystem if all you require is monomials not fully fledged polynomials.
+A simple apackage to generate order and evaluate vectors of monomials. It is designed as an alternative to the [MultivariatePolynomials.jl](https://github.com/JuliaAlgebra/MultivariatePolynomials.jl) ecosystem if all you require is monomials not fully fledged polynomials.
 
 The core functionality is exposed through the `monomials` function. It generates all monomials of the given variables up to a defined maximum degree and sorts them in the requested order. Current monomial orders are:
 
@@ -40,4 +40,25 @@ m = monomials(["x","y"], 2, LexicographicOrder(); include_zero=true)
  x
  xy
  x²
+```
+
+Monomials can be evaluated by passing a `Vector`.
+
+```julia
+    m = Monomial(["x", "y"], [1, 2])
+    m([2, 3])
+```
+
+For convenience, a single monomial can be evaluated at multiple points by passing a `Matrix`. In this case, the points are expected to be the columns of the given matrix.
+
+```julia
+m = Monomial(["x", "y"], [1, 2])
+m(rand(2, 5))
+```
+
+Finally, it is possible to evaulate all monomials in a vector for one or more points.
+
+```julia
+m = monomials((["x", "y"], 2, LexcicographicOrder())
+m(rand(2, 5))
 ```
