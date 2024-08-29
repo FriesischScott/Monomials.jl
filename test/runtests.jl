@@ -177,6 +177,12 @@ end
         @test m[6](x) == [1, 4, 9]
     end
 
+    @testset "Vector{Monomial}-Vector" begin
+        @test m(x[:, 1]) == [1, 2, 4, 1, 2, 1]
+        @test m(x[:, 2]) == [1, 3, 9, 2, 6, 4]
+        @test m(x[:, 3]) == [1, 1, 1, 3, 3, 9]
+    end
+
     @testset "Vector{Monomial}-Matrix" begin
         @test m(x) == [1 1 1; 2 3 1; 4 9 1; 1 2 3; 2 6 3; 1 4 9]
     end
