@@ -12,6 +12,17 @@ export GradedReverseLexicographicOrder
 export degree
 export monomials
 
+"""
+    Monomial(x, α)
+
+Greate a Monomial from a vector of variables `x` and associated degrees vector `α`.
+
+# Examples
+```julia-repl
+julia> Monomial(["x", "y"], [1, 2])
+xy^2
+```
+"""
 struct Monomial
     x::AbstractVector{String}
     α::AbstractVector{Integer}
@@ -46,10 +57,34 @@ function (mvec::AbstractVector{Monomial})(x::AbstractMatrix{<:Real})
     return vcat([m(x)' for m in mvec]...)
 end
 
+"""
+    degree(m::Monomial)
+
+Computes the degree of a monomial, which is the sum of the degrees of its variables.
+"""
 function degree(m::Monomial)
     return sum(m.α)
 end
 
+"""
+    monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder; include_zero::Bool=false)
+
+Computes all monomials of the variables `x` up to degree `d` ordered in monomial order `mo`.
+
+Pass `include_zero=true` to include the zero degree monomial.
+
+# Examples
+```julia-repl
+julia> monomials(["x","y"], 2, LexicographicOrder(); include_zero=true)
+5-element Vector{Monomial}:
+1
+y
+ y²
+ x
+ xy
+ x²
+```
+"""
 function monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder; include_zero::Bool=false)
 
     nvars = length(x)
