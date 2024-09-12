@@ -1,7 +1,7 @@
 name = "Monomials"
 uuid = "272bfe72-f66c-432f-a94d-600f29493792"
 authors = ["Jasper Behrensdorf <behrensdorf@irz.uni-hannover.de>"]
-version = "0.1.0"
+version = "1.0.0"
 
 [compat]
 julia="1.10"
