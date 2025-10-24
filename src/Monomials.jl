@@ -13,7 +13,7 @@ export degree
 export monomials
 
 """
-    Monomial(x, α)
+	Monomial(x, α)
 
 Greate a Monomial from a vector of variables `x` and associated degrees vector `α`.
 
@@ -24,8 +24,8 @@ xy^2
 ```
 """
 struct Monomial
-    x::AbstractVector{String}
-    α::AbstractVector{Integer}
+	x::AbstractVector{String}
+	α::AbstractVector{Integer}
 end
 
 abstract type MonomialOrder end
@@ -42,32 +42,55 @@ end
 
 
 function (m::Monomial)(x::AbstractVector{<:Real})
-    return prod(x .^ m.α)
+	return prod(x .^ m.α)
 end
 
 function (m::Monomial)(x::AbstractMatrix{<:Real})
-    return map(xᵢ -> m(xᵢ), eachcol(x))
+	return map(xᵢ -> m(xᵢ), eachcol(x))
 end
 
 function (mvec::AbstractVector{Monomial})(x::AbstractVector{<:Real})
-    return [m(x) for m in mvec]
+	return [m(x) for m in mvec]
 end
 
 function (mvec::AbstractVector{Monomial})(x::AbstractMatrix{<:Real})
-    return vcat([m(x)' for m in mvec]...)
+	return vcat([m(x)' for m in mvec]...)
 end
 
 """
-    degree(m::Monomial)
+	degree(m::Monomial)
 
 Computes the degree of a monomial, which is the sum of the degrees of its variables.
 """
 function degree(m::Monomial)
-    return sum(m.α)
+	return sum(m.α)
+end
+
+# get all vectors of length n with  components selected from 0:d and sum <= d.
+# Returns a channel that is later processed to `Monomial` objects.
+function exponents(n::Int, d::Int)
+	return Channel{Vector{Int}}(c->begin
+		buf = Vector{Int}(undef, n)
+		function rec(i::Int, rem::Int)
+			if i > n
+				put!(c, copy(buf))
+			else
+				# each position can be at most min(d, rem) because sum must not exceed d
+				for v in 0:min(d, rem)
+					buf[i] = v
+					# test next component
+					rec(i+1, rem - v)
+				end
+			end
+		end
+		# start recursion
+		rec(1, d)
+		close(c)
+	end)
 end
 
 """
-    monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder; include_zero::Bool=false)
+	monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder; include_zero::Bool=false)
 
 Computes all monomials of the variables `x` up to degree `d` ordered in monomial order `mo`.
 
@@ -85,72 +108,68 @@ y
  x²
 ```
 """
-function monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder; include_zero::Bool=false)
+function monomials(x::AbstractVector{String}, d::Integer, mo::MonomialOrder; include_zero::Bool = false)
 
-    nvars = length(x)
+	m = map(α -> Monomial(x, α), exponents(length(x), d))
 
-    lb = include_zero ? -1 : 0
+	if !include_zero
+		# delete first (degree =0) monomial
+		deleteat!(m, 1)
+	end
 
-    exponents = Iterators.filter(α -> lb < sum(α) <= d, Iterators.product(repeat([0:d], nvars)...))
-
-    m = map(exponents) do α
-        Monomial(x, [α...])
-    end
-
-    return order(m, mo)
-
+	return order(m, mo)
 end
 
 function order(m::AbstractVector{Monomial}, _::LexicographicOrder)
 
-    function lt(a::Monomial, b::Monomial)
-        if a.α != b.α
-            idx = findfirst(!iszero, a.α .- b.α)
-            return a.α[idx] < b.α[idx]
-        end
-    end
+	function lt(a::Monomial, b::Monomial)
+		if a.α != b.α
+			idx = findfirst(!iszero, a.α .- b.α)
+			return a.α[idx] < b.α[idx]
+		end
+	end
 
-    return sort(m; lt=lt)
+	return sort(m; lt = lt)
 end
 
 function order(m::AbstractVector{Monomial}, _::GradedLexicographicOrder)
 
-    function lt(a::Monomial, b::Monomial)
-        deg_a, deg_b = degree(a), degree(b)
+	function lt(a::Monomial, b::Monomial)
+		deg_a, deg_b = degree(a), degree(b)
 
-        if deg_a != deg_b
-            return deg_a < deg_b
+		if deg_a != deg_b
+			return deg_a < deg_b
 
-        end
+		end
 
-        if a.α != b.α
-            idx = findfirst(!iszero, a.α .- b.α)
-            return a.α[idx] < b.α[idx]
-        end
-    end
+		if a.α != b.α
+			idx = findfirst(!iszero, a.α .- b.α)
+			return a.α[idx] < b.α[idx]
+		end
+	end
 
-    return sort(m; lt=lt)
+	return sort(m; lt = lt)
 end
 
 function order(m::AbstractVector{Monomial}, _::GradedReverseLexicographicOrder)
 
-    function lt(a::Monomial, b::Monomial)
-        deg_a, deg_b = degree(a), degree(b)
+	function lt(a::Monomial, b::Monomial)
+		deg_a, deg_b = degree(a), degree(b)
 
-        if deg_a != deg_b
-            return deg_a < deg_b
+		if deg_a != deg_b
+			return deg_a < deg_b
 
-        end
+		end
 
-        if a.α != b.α
-            idx = findlast(!iszero, a.α .- b.α)
-            return a.α[idx] > b.α[idx]
-        end
+		if a.α != b.α
+			idx = findlast(!iszero, a.α .- b.α)
+			return a.α[idx] > b.α[idx]
+		end
 
 
-    end
+	end
 
-    return sort(m; lt=lt)
+	return sort(m; lt = lt)
 end
 
 include("show.jl")
