@@ -46,7 +46,7 @@ function (m::Monomial)(x::AbstractVector{<:Real})
 end
 
 function (m::Monomial)(x::AbstractMatrix{<:Real})
-	return map(xᵢ -> m(xᵢ), eachcol(x))
+	return vec([m](x))
 end
 
 function (mvec::AbstractVector{Monomial})(x::AbstractVector{<:Real})
@@ -54,7 +54,16 @@ function (mvec::AbstractVector{Monomial})(x::AbstractVector{<:Real})
 end
 
 function (mvec::AbstractVector{Monomial})(x::AbstractMatrix{<:Real})
-	return vcat([m(x)' for m in mvec]...)
+	z = zeros(eltype(x), length(mvec), size(x, 2))
+	for (i, m) in enumerate(mvec)
+		if iszero(m.α)
+			z[i, :] .= 1.0
+		else
+			idx = findall(!iszero, m.α)
+			z[i, :] = prod(x[idx, :] .^ m.α[idx]; dims = 1)
+		end
+	end
+    return z
 end
 
 """
